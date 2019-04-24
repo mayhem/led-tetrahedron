@@ -6,11 +6,13 @@ import socket
 import json
 import math
 import traceback
+from threading import Thread
 from random import random, randint, seed
 from math import fmod, sin, pi
 from time import sleep, time
 from colorsys import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 import opc
+import logging
 
 #import solid_effect
 import sparkle_effect
@@ -20,8 +22,9 @@ import undulating_effect
 #import strobe_effect
 import test_effect
 
+log = logging.getLogger(__name__)
 
-class Tetrahedron(object):
+class Tetrahedron(Thread):
 
     NUM_STRIPS           = 6
     NUM_STRIPS_FC        = 8
@@ -37,6 +40,10 @@ class Tetrahedron(object):
     STRIP_ALL = 63
 
     def __init__(self):
+        Thread.__init__(self)
+        seed()
+
+        self._end = False
         self.state = False
         self.brightness = 128
         self.effect_list = []
@@ -46,6 +53,7 @@ class Tetrahedron(object):
         self.pixels = [ (0, 0, 0) ] * self.NUM_STRIPS_FC * self.NUM_LED_PER_STRIP_FC
 
     def set_state(self, state):
+        log.info("set state: %d" % state)
         self.state = state
 
     def set_color(self, strips, col):
@@ -84,7 +92,6 @@ class Tetrahedron(object):
             if self.effect_list[next_effect] != self.current_effect:
                 break
 
-        print(next_effect)
         self.set_effect(self.effect_list[next_effect].effect_name)
 
     def set_effect(self, effect_name):
@@ -132,32 +139,34 @@ class Tetrahedron(object):
 
 
     def loop(self):
+        log.info('.')
+        sleep(.3)
         if self.current_effect and self.state:
             self.current_effect.loop()
 
 
+    def end(self):
+        self._end = True
 
-if __name__ == "__main__":
-    seed()
-    a = Tetrahedron()
-    a.add_effect(sparkle_effect.SparkleEffect(a, "sparkle"))
-    a.add_effect(undulating_effect.UndulatingEffect(a, "undulating colors"))
-    a.add_effect(test_effect.TestEffect(a, "test color cycle"))
-#   a.add_effect(colorcycle_effect.ColorCycleEffect(a, "color cycle"))
-#   a.add_effect(solid_effect.SolidEffect(a, "solid color"))
-#   a.add_effect(bootie_call_effect.BootieCallEffect(a, "slow bootie call", .0005))
-#   a.add_effect(bootie_call_effect.BootieCallEffect(a, "fast bootie call", .005))
-#   a.add_effect(strobe_effect.StrobeEffect(a, "slow strobe", 2, .02))
-#   a.add_effect(strobe_effect.StrobeEffect(a, "fast strobe", 8, .03))
-    a.setup()
-    a.set_state(True)
-    try:
-        while True:
-            a.set_random_effect()
+
+    def run(self):
+
+        self.add_effect(sparkle_effect.SparkleEffect(self, "sparkle"))
+        self.add_effect(test_effect.TestEffect(self, "test color cycle"))
+#   self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
+#   self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
+#   self.add_effect(solid_effect.SolidEffect(self, "solid color"))
+#   self.add_effect(bootie_call_effect.BootieCallEffect(self, "slow bootie call", .0005))
+#   self.add_effect(bootie_call_effect.BootieCallEffect(self, "fast bootie call", .005))
+#   self.add_effect(strobe_effect.StrobeEffect(self, "slow strobe", 2, .02))
+#   self.add_effect(strobe_effect.StrobeEffect(self, "fast strobe", 8, .03))
+        self.setup()
+        self.set_state(False)
+
+        while not self._end:
+            self.set_random_effect()
             timeout = time() + 5
-            while timeout > time():
-                a.loop()
+            while timeout > time() and not self._end:
+                self.loop()
 
-
-    except KeyboardInterrupt:
-        a.clear()
+        self.clear()
