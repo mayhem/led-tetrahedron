@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 from random import random, randint
 import palette
 import effect
@@ -12,6 +12,11 @@ class SparkleEffect(effect.Effect):
         self.FADE_CONSTANT = .65
         self.PASSES = 35
         self.DOTS = 10
+        
+        self.pss = 0
+        self.palette = []
+        self.next_update = 0
+        self.update_interval = .5
 
 
     def setup(self, num_leds):
@@ -37,15 +42,17 @@ class SparkleEffect(effect.Effect):
 
     def loop(self):
 
-        pal = SparkleEffect.create_analogous_palette()
-        for pss in range(self.PASSES):
+        if self.pss == 0:
+            self.palette = SparkleEffect.create_analogous_palette()
+
+        if self.next_update < time():
+            self.next_update = time() + self.update_interval
+
             for dot in range(self.DOTS):
                 for strip in range(self.led_art.NUM_STRIPS):
-                    self.led_art.set_led_color(1 << strip, randint(0, self.num_leds-1), pal[randint(0, len(pal)-1)])
+                    self.led_art.set_led_color(1 << strip, randint(0, self.num_leds-1), self.palette[randint(0, len(self.palette)-1)])
 
             self.led_art.show()
-            for s in range(10):
-                sleep(.05)
 
             for strip in range(self.led_art.NUM_STRIPS):
                 for led in range(self.num_leds):
@@ -53,3 +60,5 @@ class SparkleEffect(effect.Effect):
                     for j in range(3):
                         color[j] = int(float(color[j]) * self.FADE_CONSTANT)
                     self.led_art.set_led_color(1 << strip, led, (color[0], color[1], color[2]))
+
+            self.pss = (self.pss + 1) % self.PASSES  

@@ -5,7 +5,6 @@ from time import sleep, time
 from colorsys import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 import undulating_effect
 
-import config
 import gradient
 import palette
 import effect
@@ -20,8 +19,8 @@ class ColorCycleEffect(effect.Effect):
         self.render_increment = .01
 
 
-    def setup(self):
-
+    def setup(self, num_leds):
+        self.num_leds = num_leds
         self.source = list(palette.create_random_palette())
         self.source_index = 0
         self.num_new_points = 0
@@ -38,8 +37,8 @@ class ColorCycleEffect(effect.Effect):
     def loop(self):
 
         try:
-            g = gradient.Gradient(config.NUM_LEDS, self.palette)
-            g.render(self.led_art) 
+            g = gradient.Gradient(self.num_leds, self.palette)
+            g.render(self.led_art, 0xFF) 
             self.led_art.show()
         except ValueError as err:
             pass

@@ -17,7 +17,7 @@ import logging
 #import solid_effect
 import sparkle_effect
 import undulating_effect
-#import colorcycle_effect
+import colorcycle_effect
 #import bootie_call_effect
 #import strobe_effect
 import test_effect
@@ -55,6 +55,8 @@ class Tetrahedron(Thread):
     def set_state(self, state):
         log.info("set state: %d" % state)
         self.state = state
+        if not state:
+            self.clear()
 
     def set_color(self, strips, col):
         for led in range(self.NUM_LED_PER_STRIP):
@@ -139,34 +141,33 @@ class Tetrahedron(Thread):
 
 
     def loop(self):
-        log.info('.')
-        sleep(.3)
-        if self.current_effect and self.state:
+        if self.current_effect:
             self.current_effect.loop()
-
 
     def end(self):
         self._end = True
-
 
     def run(self):
 
         self.add_effect(sparkle_effect.SparkleEffect(self, "sparkle"))
         self.add_effect(test_effect.TestEffect(self, "test color cycle"))
-#   self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
-#   self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
+#        self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
+        self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
 #   self.add_effect(solid_effect.SolidEffect(self, "solid color"))
 #   self.add_effect(bootie_call_effect.BootieCallEffect(self, "slow bootie call", .0005))
 #   self.add_effect(bootie_call_effect.BootieCallEffect(self, "fast bootie call", .005))
 #   self.add_effect(strobe_effect.StrobeEffect(self, "slow strobe", 2, .02))
 #   self.add_effect(strobe_effect.StrobeEffect(self, "fast strobe", 8, .03))
         self.setup()
-        self.set_state(False)
-
+        self.set_state(True)
         while not self._end:
             self.set_random_effect()
             timeout = time() + 5
-            while timeout > time() and not self._end:
+            while timeout > time() and not self._end and self.state:
                 self.loop()
+
+            while not self.state and not self._end:
+                sleep(.1)
+     
 
         self.clear()
