@@ -16,13 +16,14 @@ class SparkleEffect(effect.Effect):
         self.pss = 0
         self.palette = []
         self.next_update = 0
-        self.update_interval = .5
+        self.update_interval = .7
 
 
     def setup(self, num_leds):
         self.passes = 0
         self.dots = 0
         self.num_leds = num_leds
+        self.init_clear = False
 
 
     def set_color(self, color):
@@ -41,6 +42,11 @@ class SparkleEffect(effect.Effect):
 
 
     def loop(self):
+
+        if not self.init_clear:
+            self.init_clear = True
+            self.led_art.clear()
+            sleep(.2)
 
         if self.pss == 0:
             self.palette = SparkleEffect.create_analogous_palette()

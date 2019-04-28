@@ -167,12 +167,11 @@ class Tetrahedron(Thread):
         self.set_state(True)
         while not self._end:
             self.set_random_effect()
-            timeout = time() + 5
+            timeout = time() + 15
             while timeout > time() and not self._end and self.state:
                 self.loop()
 
             while not self.state and not self._end:
                 sleep(.1)
-     
 
         self.clear()
