@@ -14,7 +14,8 @@ from colorsys import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 import opc
 import logging
 
-#import solid_effect
+import rainbow_effect
+import opposites_effect
 import sparkle_effect
 import undulating_effect
 import colorcycle_effect
@@ -97,6 +98,7 @@ class Tetrahedron(Thread):
         self.set_effect(self.effect_list[next_effect].effect_name)
 
     def set_effect(self, effect_name):
+        print("set effect %s" % effect_name)
         for effect in self.effect_list:
             if effect.name == effect_name:
                 saved_state = self.state
@@ -149,10 +151,13 @@ class Tetrahedron(Thread):
 
     def run(self):
 
+        self.add_effect(rainbow_effect.RainbowEffect(self, "rainbow"))
+#        self.add_effect(opposites_effect.OppositesEffect(self, "opposites"))
         self.add_effect(sparkle_effect.SparkleEffect(self, "sparkle"))
-        self.add_effect(test_effect.TestEffect(self, "test color cycle"))
-#        self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
         self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
+
+#   self.add_effect(test_effect.TestEffect(self, "test color cycle"))
+#   self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
 #   self.add_effect(solid_effect.SolidEffect(self, "solid color"))
 #   self.add_effect(bootie_call_effect.BootieCallEffect(self, "slow bootie call", .0005))
 #   self.add_effect(bootie_call_effect.BootieCallEffect(self, "fast bootie call", .005))

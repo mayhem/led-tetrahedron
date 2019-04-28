@@ -9,9 +9,10 @@ def make_hsv(hue, saturation = 1.0, value = 1.0):
     return (int(red*255), int(green*255), int(blue*266))
 
 
-def create_complementary_palette():
-    r = random() / 2.0
-    return (make_hsv(r), make_hsv(fmod(r + .5, 1.0)))
+def create_complementary_palette(hue = -1):
+    if hue < 0:
+        hue = random() / 2.0
+    return (make_hsv(hue), make_hsv(fmod(hue + .5, 1.0)))
 
 
 def create_triad_palette(color = None):
