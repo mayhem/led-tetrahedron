@@ -17,18 +17,15 @@ Vertexes:
 2 - tree 1 (tree + 1 clockwise)
 3 - tree 2 (tree + 2 clockwise)
 
-Segemnets:
-
-0 - top -> tree 0
+Segments:
+3 - top -> tree 0
 1 - top -> tree 1
-2 - top -> tree 2
-3 - tree 0 -> tree 1
-4 - tree 1 -> tree 2
-5 - tree 3 -> tree 0
+0 - top -> tree 2
+4 - tree 0 -> tree 1
+5 - tree 1 -> tree 2
+2 - tree 2 -> tree 0
 
 """
-         
-
 
 class VertexEffect(effect.Effect):
 
@@ -37,32 +34,29 @@ class VertexEffect(effect.Effect):
         self.palettes = []
         self.point_distance = .25
         self.hue = random()
-        self.hue_increment = .01
-
+        self.hue_increment = .005
 
     def setup(self, num_leds):
         self.num_leds = num_leds
 
-
     def set_color(self, color):
         pass
-
 
     def make_palettes(self, hues):
         ''' pass in 4 hues in vertex order '''
 
-        palettes = [
-            [ 0.0, hues[0], 1.0, hues[1] ],
-            [ 0.0, hues[0], 1.0, hues[2] ],
-            [ 0.0, hues[0], 1.0, hues[3] ],
-            [ 0.0, hues[1], 1.0, hues[2] ],
-            [ 0.0, hues[2], 1.0, hues[3] ],
-            [ 0.0, hues[3], 1.0, hues[1] ],
+        return [                                # segment
+            [ (0.0, hues[0]), (1.0, hues[3]) ], # 0
+            [ (0.0, hues[0]), (1.0, hues[2]) ], # 1
+            [ (0.0, hues[1]), (1.0, hues[3]) ], # 2
+            [ (0.0, hues[0]), (1.0, hues[1]) ], # 3
+            [ (0.0, hues[1]), (1.0, hues[2]) ], # 4
+            [ (0.0, hues[2]), (1.0, hues[3]) ], # 5
         ]
 
 
     def create_analogous_palette(self, hue):
-        s = random() / 14.0
+        s = random() / 2.0
         return (palette.make_hsv(hue),
                 palette.make_hsv(fmod(hue - s + 1.0, 1.0)),
                 palette.make_hsv(fmod(hue - (s * 2) + 1.0, 1.0)),
@@ -77,10 +71,11 @@ class VertexEffect(effect.Effect):
             strip = 1 << i
             try:
                 g = gradient.Gradient(self.num_leds, pal)
-                g.render(self.led_art, i) 
-                self.led_art.show()
+                g.render(self.led_art, 1 << i) 
             except ValueError as err:
                 pass
 
-        self.hue += hue_increment
-        sleep(.2)
+        self.led_art.show()
+
+        self.hue += self.hue_increment
+        sleep(5)
