@@ -14,6 +14,7 @@ from colorsys import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 import opc
 import logging
 
+import vertex_effect
 import rainbow_effect
 import opposites_effect
 import sparkle_effect
@@ -151,10 +152,11 @@ class Tetrahedron(Thread):
 
     def run(self):
 
-        self.add_effect(rainbow_effect.RainbowEffect(self, "rainbow"))
+        self.add_effect(vertex_effect.VertexEffect(self, "vertex"))
+#        self.add_effect(rainbow_effect.RainbowEffect(self, "rainbow"))
 #        self.add_effect(opposites_effect.OppositesEffect(self, "opposites"))
-        self.add_effect(sparkle_effect.SparkleEffect(self, "sparkle"))
-        self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
+#        self.add_effect(sparkle_effect.SparkleEffect(self, "sparkle"))
+#        self.add_effect(colorcycle_effect.ColorCycleEffect(self, "color cycle"))
 
 #   self.add_effect(test_effect.TestEffect(self, "test color cycle"))
 #   self.add_effect(undulating_effect.UndulatingEffect(self, "undulating colors"))
@@ -167,7 +169,7 @@ class Tetrahedron(Thread):
         self.set_state(True)
         while not self._end:
             self.set_random_effect()
-            timeout = time() + 15
+            timeout = time() + 60
             while timeout > time() and not self._end and self.state:
                 self.loop()
 
