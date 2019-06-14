@@ -1,0 +1,12 @@
+[Unit]
+Description=Fadecandy server
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/home/robert/fadecandy/server/fcserver /home/robert/fadecandy/server/config.json
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
