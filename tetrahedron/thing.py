@@ -71,8 +71,10 @@ def run_server():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(
-        level=10,
-        format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s"
-    )
-    run_server()
+#    logging.basicConfig(
+#        level=10,
+#        format="%(asctime)s %(filename)s:%(lineno)s %(levelname)s %(message)s"
+#    )
+#    run_server()
+    tet = Tetrahedron()
+    tet.run()

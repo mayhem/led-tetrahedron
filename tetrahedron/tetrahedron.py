@@ -14,7 +14,7 @@ from colorsys import hsv_to_rgb, rgb_to_hsv, rgb_to_hsv
 import opc
 import logging
 
-import strip_effect
+#import strip_effect
 import vertex_effect
 import rainbow_effect
 import opposites_effect
